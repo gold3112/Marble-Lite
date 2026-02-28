@@ -2,6 +2,10 @@
 
 最小限の機能でwplace.liveにテンプレート画像をオーバーレイ表示するUserscript。
 
+## TamperMonkeyがある場合の導入方法
+下のリンクをクリックしてください。
+[dist/ml-optimized.user.js](dist/ml-optimized.user.js)
+
 ## 機能
 
 - 画像ファイルを読み込み
