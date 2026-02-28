@@ -4,7 +4,7 @@
 
 ## TamperMonkeyがある場合の導入方法
 下のリンクをクリックしてください。
-[dist/ml-optimized.user.js](dist/ml-optimized.user.js)
+[ワンクリックインストール](https://raw.githubusercontent.com/gold3112/Marble-Lite/main/dist/ml-optimized.user.js)
 
 ## 機能
 
