@@ -1,13 +1,2 @@
-export const state = {
-  id: null, // imageData
-  tx: 0, // baseTileX
-  ty: 0, // baseTileY
-  px: 0, // basePixelX
-  py: 0, // basePixelY
-  w: 0,  // width
-  h: 0,  // height
-  e: false, // enabled
-};
-
-export const TILE_SIZE = 1000;
-export const DRAW_MULT = 3;
+export const state = { id: null, tx: 0, ty: 0, px: 0, py: 0, w: 0, h: 0, e: 0 };
+export const TILE_SIZE = 1000, DRAW_MULT = 3;

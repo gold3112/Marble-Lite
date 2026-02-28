@@ -9,67 +9,37 @@
 
 (() => {
   // src/state.js
-  var state = {
-    id: null,
-    // imageData
-    tx: 0,
-    // baseTileX
-    ty: 0,
-    // baseTileY
-    px: 0,
-    // basePixelX
-    py: 0,
-    // basePixelY
-    w: 0,
-    // width
-    h: 0,
-    // height
-    e: false
-    // enabled
-  };
+  var state = { id: null, tx: 0, ty: 0, px: 0, py: 0, w: 0, h: 0, e: 0 };
   var TILE_SIZE = 1e3;
   var DRAW_MULT = 3;
 
   // src/draw.js
-  var sourceCanvas = null;
+  var sourceCanvas;
   var M = Math;
   async function drawTemplateOnTile(tileBlob, tileCoords) {
-    const [tX, tY] = tileCoords, S = state, T = TILE_SIZE, D2 = DRAW_MULT;
-    const bitmap = await createImageBitmap(tileBlob);
-    const dZ = T * D2;
-    const canvas = document.createElement("canvas");
+    const [tX, tY] = tileCoords, S = state, T = TILE_SIZE, D2 = DRAW_MULT, dZ = T * D2;
+    const bitmap = await createImageBitmap(tileBlob), canvas = document.createElement("canvas");
     canvas.width = canvas.height = dZ;
     const ctx = canvas.getContext("2d");
-    ctx.imageSmoothingEnabled = false;
+    ctx.imageSmoothingEnabled = 0;
     ctx.drawImage(bitmap, 0, 0, dZ, dZ);
-    const tWSX = S.tx * T + S.px, tWSY = S.ty * T + S.py;
-    const cTWSX = tX * T, cTWSY = tY * T;
+    const tWSX = S.tx * T + S.px, tWSY = S.ty * T + S.py, cTWSX = tX * T, cTWSY = tY * T;
     const oX = M.max(0, cTWSX - tWSX), oY = M.max(0, cTWSY - tWSY);
-    const dW = M.min(S.w - oX, T - (tWSX + oX - cTWSX));
-    const dH = M.min(S.h - oY, T - (tWSY + oY - cTWSY));
-    const cX = M.max(0, tWSX - cTWSX) * D2, cY = M.max(0, tWSY - cTWSY) * D2;
-    if (!sourceCanvas) {
-      sourceCanvas = document.createElement("canvas");
-      sourceCanvas.width = S.w;
-      sourceCanvas.height = S.h;
-      sourceCanvas.getContext("2d").putImageData(S.id, 0, 0);
-    }
+    const dW = M.min(S.w - oX, T - (tWSX + oX - cTWSX)), dH = M.min(S.h - oY, T - (tWSY + oY - cTWSY));
+    if (!sourceCanvas) sourceCanvas = document.createElement("canvas"), sourceCanvas.width = S.w, sourceCanvas.height = S.h, sourceCanvas.getContext("2d").putImageData(S.id, 0, 0);
     if (dW > 0 && dH > 0) {
-      const temp = document.createElement("canvas");
-      const w = dW * D2, h = dH * D2;
+      const temp = document.createElement("canvas"), w = dW * D2, h = dH * D2;
       temp.width = w;
       temp.height = h;
       const tCtx = temp.getContext("2d");
-      tCtx.imageSmoothingEnabled = false;
+      tCtx.imageSmoothingEnabled = 0;
       tCtx.drawImage(sourceCanvas, oX, oY, dW, dH, 0, 0, w, h);
       const iD = tCtx.getImageData(0, 0, w, h), d = iD.data;
-      for (let i = 0; i < d.length; i += 4) {
-        if (i / 4 % w % D2 !== 1 || M.floor(i / 4 / w) % D2 !== 1) d[i + 3] = 0;
-      }
+      for (let i = 0; i < d.length; i += 4) if (i / 4 % w % D2 !== 1 || M.floor(i / 4 / w) % D2 !== 1) d[i + 3] = 0;
       tCtx.putImageData(iD, 0, 0);
-      ctx.drawImage(temp, cX, cY);
+      ctx.drawImage(temp, M.max(0, tWSX - cTWSX) * D2, M.max(0, tWSY - cTWSY) * D2);
     }
-    return await new Promise((r) => canvas.toBlob(r));
+    return new Promise((r) => canvas.toBlob(r));
   }
 
   // src/fetchProxy.js
